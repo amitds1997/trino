@@ -151,6 +151,17 @@ public class TestExternalHiveTable
         query(format("CREATE TABLE %s.%s.%s WITH (external_location = '%s') AS SELECT * FROM tpch.tiny.nation", HIVE_CATALOG_WITH_EXTERNAL_WRITES, schema, table, tableLocation));
     }
 
+    @Test
+    public void testCreateExternalTableWithNonExistentPath()
+    {
+        String schema = "schema_with_table_without_location";
+        query(format("CREATE SCHEMA %s.%s", HIVE_CATALOG_WITH_EXTERNAL_WRITES, schema));
+
+        String table = "table_with_non_existent_path";
+        String tableLocation = "/tmp/" + table;
+        query(format("CREATE TABLE %s.%s.%s (id BIGINT, name VARCHAR) WITH (external_location = '%s')", HIVE_CATALOG_WITH_EXTERNAL_WRITES, schema, table, tableLocation));
+    }
+
     private void insertNationPartition(TableInstance<?> nation, int partition)
     {
         onHive().executeQuery(
